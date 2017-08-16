@@ -1,0 +1,34 @@
+# MACROS
+MACRO(SOURCE_GROUP_BY_FOLDER FILE_GROUP)
+
+	SET(SOURCE_GROUP_DELIMITER "/")
+	SET(last_dir "")
+	SET(files "")
+
+	FOREACH(file ${FILE_GROUP})
+
+		#FILE(RELATIVE_PATH relative_file ${ROOT_CPP_PATH} ${file})
+		#GET_FILENAME_COMPONENT(dir "${relative_file}" PATH)
+		GET_FILENAME_COMPONENT(dir "${file}" PATH)
+		#MESSAGE(STATUS ${dir})
+
+		IF (NOT "${dir}" STREQUAL "${last_dir}")
+			
+			IF (files)
+				SOURCE_GROUP("${last_dir}" FILES ${files})
+			ENDIF (files)
+			
+			SET(files "")
+
+		ENDIF (NOT "${dir}" STREQUAL "${last_dir}")
+		
+		SET(files ${files} ${file})
+		SET(last_dir "${dir}")
+
+	ENDFOREACH(file)
+
+	IF (files)
+		SOURCE_GROUP("${last_dir}" FILES ${files})
+	ENDIF (files)
+
+ENDMACRO(SOURCE_GROUP_BY_FOLDER)
