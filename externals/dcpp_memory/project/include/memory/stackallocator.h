@@ -50,6 +50,8 @@ private:
 	{
 		return mp_buffer <= memPtr && (memPtr + size) <= (mp_buffer + m_capacity);
 	}
+	
+	const TBytePtr	StackHeadPtr() const { return mp_buffer + m_size; }
 
 	// ===========================================================
 	// Constructors

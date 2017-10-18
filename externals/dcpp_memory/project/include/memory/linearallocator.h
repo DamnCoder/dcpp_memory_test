@@ -62,6 +62,8 @@ public:
 public:
 	TBytePtr Allocate(const size_t size);
 	
+	void Deallocate(TBytePtr memPtr, const size_t size);
+	
 	void Clear();
 
 	// ===========================================================

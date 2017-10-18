@@ -12,8 +12,25 @@
 #include <cstdlib>
 #include <new>
 
+#define DCNEW(allocator) new (allocator, __FILE__, __LINE__)
+#define DCDELETE(allocator, ptr) destroy(ptr, allocator, __FILE__, __LINE__)
+
+// Example:
+// CFoo* foo = DCNEW(allocator) CFoo(i*2);
+// the preprocessor expands the above into:
+// CFoo* foo = new (sizeof(CFoo), allocator, "file.cpp", <line_where_called>) CFoo(i*2);
+
 typedef void* TRawPtr;
 typedef char* TBytePtr;
+
+struct TMemPtr
+{
+	union
+	{
+		TRawPtr		rawPtr;
+		TBytePtr	bytePtr;
+	};
+};
 
 class CAlign
 {
@@ -25,21 +42,28 @@ private:
 	int	m_value;
 };
 
-constexpr std::size_t align_up(std::size_t n, const CAlign& alignment)
+extern const std::size_t AlignUp(const size_t n, const size_t alignment);
+
+template <class Allocator>
+inline
+TRawPtr operator new(const size_t size, Allocator& allocator, const char* file, int line)
 {
-	return (n + (alignment.Value()-1)) & ~(alignment.Value()-1);
+	//printf("%s\n %d\n", file, line);
+	return allocator.Allocate(size);
 }
 
-extern void* operator new(size_t size, const std::nothrow_t &) throw();
-extern void* operator new(std::size_t size) throw(std::bad_alloc);
+template <class Allocator, class T>
+void destroy(T* ptr, Allocator& allocator, const char* file, int line)
+{
+	//printf("%s\n %d\n", file, line);
+	ptr->~T();
+	allocator.Deallocate((TBytePtr)ptr, sizeof(T));
+}
 
-extern void* operator new[](size_t size, const std::nothrow_t &) throw();
-extern void* operator new[](std::size_t size) throw(std::bad_alloc);
+extern void* operator new(std::size_t size);
+extern void* operator new[](std::size_t size);
 
-extern void operator delete(void *p, const std::nothrow_t &) throw();
-extern void operator delete(void* mem) throw();
-
-extern void operator delete[](void *p, const std::nothrow_t &) throw();
-extern void operator delete[](void* mem) throw();
+extern void operator delete(void* mem) noexcept;
+extern void operator delete[](void* mem) noexcept;
 
 #endif /* MEMORY_H */

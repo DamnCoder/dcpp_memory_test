@@ -46,6 +46,7 @@ inline void TestStackPushPopAllMemory()
 	{
 		TBytePtr memPtr = allocator.Allocate(64);
 		
+		printf("%d Address %p\n", i, memPtr);
 		ptrArray[i++] = memPtr;
 
 		const size_t allocatedSize = 64 * i;
@@ -56,9 +57,8 @@ inline void TestStackPushPopAllMemory()
 	{
 		--i;
 		TBytePtr memPtr = ptrArray[i];
-		printf("%d Address before %p\n", i, memPtr);
+		printf("%d Address %p\n", i, memPtr);
 		allocator.Deallocate(memPtr, 64);
-		printf("Address after %p\n", memPtr);
 	}
 	
 	assert(allocator.Size() == 0 && allocator.Capacity() == 1024);

@@ -5,8 +5,8 @@
 int main( int argc, char* args[] )
 {
 	printf("Starting memory tests\n");
-	LinearTests();
-	StackTests();
+	//LinearTests();
+	//StackTests();
 	NewDeleteTests();
 	printf("Finished memory tests\n");
 	return 0;

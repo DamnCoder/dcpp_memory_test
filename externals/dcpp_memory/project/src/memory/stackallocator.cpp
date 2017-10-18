@@ -26,20 +26,20 @@ namespace dc
 
 	TBytePtr CStackAllocator::Allocate(const size_t size)
 	{
-		assert(m_size + size <= m_capacity);
-		
-		TBytePtr memAddress = mp_buffer + m_size;
-		m_size += size;
-		
-		assert(InsideBuffer(memAddress, size));
-		
+		TBytePtr memAddress = StackHeadPtr();
+		const size_t aligned_size = AlignUp(size, m_alignment);
+		assert(InsideBuffer(memAddress, aligned_size) && "The allocated memory would be out of bounds!");
+		m_size += aligned_size;
 		return memAddress;
 	}
 	
 	void CStackAllocator::Deallocate(TBytePtr memPtr, const size_t size)
 	{
-		assert(InsideBuffer(memPtr, size));
-		m_size -= size;
+		const size_t aligned_size = AlignUp(size, m_alignment);
+		assert(InsideBuffer(memPtr, aligned_size));
+		TBytePtr memLocation = StackHeadPtr() - aligned_size;
+		assert(memLocation == memPtr && "Deallocate memory in the reverse order you allocated it!");
+		m_size -= aligned_size;
 	}
 	
 	void CStackAllocator::Clear()

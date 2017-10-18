@@ -7,49 +7,31 @@
 
 #include "memory.h"
 
-void* operator new(size_t size, const std::nothrow_t &) throw()
+const std::size_t AlignUp(const size_t n, const size_t alignment)
+{
+	const size_t align = alignment - 1;
+	return ~align & (n + align);
+}
+
+void* operator new(std::size_t size)
 {
 	printf("New\n");
 	return malloc(size * sizeof(char));
 }
 
-void* operator new(std::size_t size) throw(std::bad_alloc)
-{
-	printf("New\n");
-	return malloc(size * sizeof(char));
-}
-
-void* operator new[](size_t size, const std::nothrow_t &) throw()
-{
-	printf("New[]\n");
-	return malloc(size);
-}
-
-void* operator new[](std::size_t size) throw(std::bad_alloc)
+void* operator new[](std::size_t size)
 {
 	printf("New[]\n");
 	return malloc(size * sizeof(char));
 }
 
-void operator delete(void* p, const std::nothrow_t &) throw()
-{
-	printf("Delete\n");
-	free(p);
-}
-
-void operator delete(void* mem) throw()
+void operator delete(void* mem) noexcept
 {
 	printf("Delete\n");
 	free(mem);
 }
 
-void operator delete[](void* p, const std::nothrow_t &) throw()
-{
-	printf("Delete[]\n");
-	free(p);
-}
-
-void operator delete[](void* mem) throw()
+void operator delete[](void* mem) noexcept
 {
 	printf("Delete[]\n");
 	free(mem);

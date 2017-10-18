@@ -35,6 +35,12 @@ namespace dc
 		return memAddress;
 	}
 	
+	void CLinearAllocator::Deallocate(TBytePtr memPtr, const size_t size)
+	{
+		// This should never be called
+		assert(false);
+	}
+	
 	void CLinearAllocator::Clear()
 	{
 		assert(mp_buffer);
