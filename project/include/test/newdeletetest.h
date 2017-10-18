@@ -36,8 +36,14 @@ inline void GlobalNewDeleteTest()
 
 inline void AlignTest()
 {
-	const size_t alignment = AlignUp(5, 4);
-	printf("%zu\n", alignment);
+	const size_t alignment = 4;
+	for(int i=1; i<=alignment*4; ++i)
+	{
+		const size_t aligned = AlignUp(i, alignment);
+		printf("%d bytes -> aligned: %zu bytes\n", i, aligned);
+		const size_t expected_result = ((((i - 1) / alignment) + 1) * alignment);
+		assert(aligned == expected_result);
+	}
 }
 
 inline void StackAllocatorNewDeleteTest()
@@ -71,13 +77,7 @@ inline void StackAllocatorNewDeleteTest()
 		printf("%d\n", foo->X());
 		DCDELETE(allocator, foo);
 	}
-	
-	for(i=num_elements-1; 0 <= i; --i)
-	{
-		CFoo* foo = fooArray[i];
-		printf("%d\n", foo->X());
-	}
-	
+
 	allocator.Clear();
 	
 	assert(allocator.Size() == 0 && allocator.Capacity() == 1024);

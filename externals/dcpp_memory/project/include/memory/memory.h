@@ -32,16 +32,6 @@ struct TMemPtr
 	};
 };
 
-class CAlign
-{
-public:
-	const int Value() const { return m_value; }
-public:
-	explicit CAlign(int value): m_value(value){}
-private:
-	int	m_value;
-};
-
 extern const std::size_t AlignUp(const size_t n, const size_t alignment);
 
 template <class Allocator>
