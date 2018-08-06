@@ -6,3 +6,4 @@ scripts/new_header.command
 externals/dcpp_memory/scripts/create_cmakelists.command
 externals/dcpp_memory/scripts/new_class.command
 externals/dcpp_memory/scripts/new_header.command
+build_vs/

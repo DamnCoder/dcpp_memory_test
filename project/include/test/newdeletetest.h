@@ -52,14 +52,14 @@ inline void StackAllocatorNewDeleteTest()
 	const size_t memBytes = 1024;
 	const size_t fooSize = sizeof(CFoo);
 	const size_t alignedFooSize = AlignUp(fooSize, alignment);
-	const int num_elements = memBytes / alignedFooSize;
+	const int NUM_ELEMENTS = static_cast<const int>(memBytes / alignedFooSize);
 	
 	printf("Size of CFoo: %zu bytes\n", fooSize);
 	printf("Aligned size: %zu bytes\n", alignedFooSize);
 	
 	dc::CStackAllocator allocator(memBytes, alignment);
 	
-	CFoo* fooArray[num_elements];
+	CFoo** fooArray = new CFoo*[NUM_ELEMENTS];
 	int i = 1;
 	while (!allocator.Full())
 	{
@@ -71,7 +71,7 @@ inline void StackAllocatorNewDeleteTest()
 		++i;
 	}
 	
-	for(i=num_elements-1; 0 <= i; --i)
+	for(i=NUM_ELEMENTS-1; 0 <= i; --i)
 	{
 		CFoo* foo = fooArray[i];
 		printf("%d\n", foo->X());
@@ -83,6 +83,7 @@ inline void StackAllocatorNewDeleteTest()
 	allocator.Clear();
 	
 	assert(allocator.Size() == 0 && allocator.Capacity() == 1024);
+	delete[] fooArray;
 }
 
 inline void NewDeleteTests()
