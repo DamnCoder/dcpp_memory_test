@@ -75,7 +75,9 @@ inline void StackAllocatorNewDeleteTest()
 	{
 		CFoo* foo = fooArray[i];
 		printf("%d\n", foo->X());
+		//delete foo;
 		DCDELETE(allocator, foo);
+		//::operator delete<dc::CStackAllocator, CFoo>(foo, allocator, "", 0);
 	}
 
 	allocator.Clear();

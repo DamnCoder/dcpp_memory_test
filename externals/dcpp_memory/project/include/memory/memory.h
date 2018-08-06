@@ -13,7 +13,9 @@
 #include <new>
 
 #define DCNEW(allocator) new (allocator, __FILE__, __LINE__)
+
 #define DCDELETE(allocator, ptr) destroy(ptr, allocator, __FILE__, __LINE__)
+
 
 // Example:
 // CFoo* foo = DCNEW(allocator) CFoo(i*2);
@@ -34,6 +36,14 @@ struct TMemPtr
 
 extern const std::size_t AlignUp(const size_t n, const size_t alignment);
 
+// Overriden regular new / delete operators
+
+extern void* operator new(std::size_t size);
+extern void* operator new[](std::size_t size);
+
+extern void operator delete(void* mem) noexcept;
+extern void operator delete[](void* mem) noexcept;
+
 template <class Allocator>
 inline
 TRawPtr operator new(const size_t size, Allocator& allocator, const char* file, int line)
@@ -42,18 +52,18 @@ TRawPtr operator new(const size_t size, Allocator& allocator, const char* file, 
 	return allocator.Allocate(size);
 }
 
+template <class Allocator>
+inline
+void operator delete(void* ptr, const size_t size, Allocator& allocator, const char* file, int line)
+{
+	allocator.Deallocate((TBytePtr)ptr, size);
+}
+
 template <class Allocator, class T>
 void destroy(T* ptr, Allocator& allocator, const char* file, int line)
 {
-	//printf("%s\n %d\n", file, line);
 	ptr->~T();
-	allocator.Deallocate((TBytePtr)ptr, sizeof(T));
+	::operator delete(ptr, sizeof(T), allocator, file, line);
 }
-
-extern void* operator new(std::size_t size);
-extern void* operator new[](std::size_t size);
-
-extern void operator delete(void* mem) noexcept;
-extern void operator delete[](void* mem) noexcept;
 
 #endif /* MEMORY_H */

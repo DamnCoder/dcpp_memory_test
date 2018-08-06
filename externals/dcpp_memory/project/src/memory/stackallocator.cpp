@@ -15,6 +15,8 @@ namespace dc
 		m_size(0),
 		m_capacity(capacity)
 	{
+		assert((m_size % m_alignment) == 0 && "Size needs to be a multiple of alignment!");
+		assert(m_alignment && !(m_alignment & (m_alignment - 1)) && "Alignment needs to be a power of 2!");
 		mp_buffer = static_cast<TBytePtr>(malloc(capacity * sizeof(char)));
 	}
 	
